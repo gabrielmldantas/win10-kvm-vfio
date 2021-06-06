@@ -15,8 +15,8 @@ done
 # Stop display manager
 systemctl stop display-manager.service
 
-# Stop all pulseaudio instances
-killall pulseaudio
+# Stop all pipewire instances
+killall pipewire
 
 # Unbind VTconsoles
 echo 0 | tee /sys/class/vtconsole/vtcon*/bind >/dev/null
