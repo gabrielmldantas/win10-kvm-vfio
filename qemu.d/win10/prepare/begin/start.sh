@@ -19,10 +19,12 @@ systemctl stop display-manager.service
 systemctl stop bluetooth.service
 
 # Stop all pipewire instances
-killall pipewire
+pgrep pipewire | xargs kill
 
 # Unbind VTconsoles
 echo 0 | tee /sys/class/vtconsole/vtcon*/bind >/dev/null
+
+sleep 3
 
 # Unload the modules
 # Retry until unload succeeds
