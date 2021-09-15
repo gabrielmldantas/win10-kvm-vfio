@@ -15,6 +15,9 @@ done
 # Stop display manager
 systemctl stop display-manager.service
 
+# Stop bluetooth service
+systemctl stop bluetooth.service
+
 # Stop all pipewire instances
 killall pipewire
 
