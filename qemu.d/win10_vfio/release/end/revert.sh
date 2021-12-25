@@ -5,19 +5,16 @@ set -x
 # Load variables
 source /etc/libvirt/hooks/kvm.conf
 
-# unload vfio-pci
-modprobe --remove --force vfio_pci
-modprobe --remove --force vfio_iommu_type1
-modprobe --remove --force vfio
-
 # Rebind PCI devs
 for pci_dev in "${VIRSH_PCI_DEVS[@]}"
 do
 	virsh nodedev-reattach "$pci_dev"
 done
 
-# rebind VTconsoles
-echo 1 | tee /sys/class/vtconsole/vtcon*/bind >/dev/null
+# unload vfio-pci
+modprobe --remove --force vfio_pci
+modprobe --remove --force vfio_iommu_type1
+modprobe --remove --force vfio
 
 # Reload modules
 for m in "${MODULES[@]}"

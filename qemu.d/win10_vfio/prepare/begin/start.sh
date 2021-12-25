@@ -19,12 +19,18 @@ systemctl stop display-manager.service
 systemctl stop bluetooth.service
 
 # Stop all pipewire instances
-pgrep pipewire | xargs kill
+pgrep pipewire | xargs kill -9
 
-# Unbind VTconsoles
-echo 0 | tee /sys/class/vtconsole/vtcon*/bind >/dev/null
+# load vfio
+modprobe vfio
+modprobe vfio_pci
+modprobe vfio_iommu_type1
 
-sleep 3
+# Detach the pci devices
+for pci_dev in "${VIRSH_PCI_DEVS[@]}"
+do
+	virsh nodedev-detach "$pci_dev"
+done
 
 # Unload the modules
 # Retry until unload succeeds
@@ -41,17 +47,6 @@ do
 	done
 	[[ $ret -ne 0 ]] && exit 1
 done
-
-# Detach the pci devices
-for pci_dev in "${VIRSH_PCI_DEVS[@]}"
-do
-	virsh nodedev-detach "$pci_dev"
-done
-
-# load vfio
-modprobe vfio
-modprobe vfio_pci
-modprobe vfio_iommu_type1
 
 # Switch to performance governor
 cpupower frequency-set -g performance
