@@ -1,9 +1,4 @@
 #!/bin/bash
-# Helpful to read output when debugging
-set -x
-
-# load variables we defined
-source /etc/libvirt/hooks/kvm.conf
 
 # Terminate sessions safely
 for s in $(loginctl --no-legend list-sessions | cut -d' ' -f1)
@@ -19,34 +14,7 @@ systemctl stop display-manager.service
 systemctl stop bluetooth.service
 
 # Stop all pipewire instances
-pgrep pipewire | xargs kill -9
-
-# load vfio
-modprobe vfio
-modprobe vfio_pci
-modprobe vfio_iommu_type1
-
-# Detach the pci devices
-for pci_dev in "${VIRSH_PCI_DEVS[@]}"
-do
-	virsh nodedev-detach "$pci_dev"
-done
-
-# Unload the modules
-# Retry until unload succeeds
-for m in "${MODULES[@]}"
-do
-	ret=0
-	for _ in $(seq 4)
-	do
-		ret=0
-		modprobe --remove --force "$m" || ret=1
-		lsmod | grep -q -- '\b'"$m"'\b' && ret=1
-		[[ $ret -eq 0 ]] && break
-		sleep 2
-	done
-	[[ $ret -ne 0 ]] && exit 1
-done
+pgrep pipewire | xargs kill
 
 # Switch to performance governor
 cpupower frequency-set -g performance
