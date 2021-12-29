@@ -19,3 +19,8 @@ pgrep pipewire | xargs kill
 # Switch to performance governor
 cpupower frequency-set -g performance
 
+modprobe --remove --force amdgpu
+
+modprobe vfio_pci
+modprobe vfio_iommu_type1
+modprobe vfio

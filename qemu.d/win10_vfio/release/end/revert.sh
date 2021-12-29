@@ -1,5 +1,11 @@
 #!/bin/bash
 
+modprobe --remove --force vfio_pci
+modprobe --remove --force vfio_iommu_type1
+modprobe --remove --force vfio
+
+modprobe amdgpu
+
 # switch back to schedutil governor
 cpupower frequency-set -g schedutil
 
